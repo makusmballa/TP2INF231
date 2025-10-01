@@ -1,0 +1,163 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/*
+  Dossier Algorithmique : 
+Insertion Triée dans une Liste Doublement Chaînée
+ 1. Titre du programme
+Insertion interactive dans une liste doublement chaînée triée
+ 2. Objectif
+Permettre à l’utilisateur d’insérer dynamiquement des entiers dans une liste doublement chaînée, tout en maintenant l’ordre croissant. L’utilisateur peut insérer autant de valeurs qu’il le souhaite, et arrêter la saisie en entrant -1. Le programme affiche ensuite la liste triée.
+ 3. Données
+Entrées :
+- Une suite d’entiers saisis par l’utilisateur.
+- L’entrée -1 indique la fin de la saisie.
+Sorties :
+- Affichage de la liste triée après toutes les insertions.
+4. Structures utilisées
+typedef struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+} Node;
+Chaque nœud contient :
+- data : la valeur entière.
+- prev : pointeur vers le nœud précédent.
+- next : pointeur vers le nœud suivant.
+ 5. Algorithmes
+ a. Création d’un nœud
+Nom : createNode  
+But : Allouer dynamiquement un nœud et initialiser ses champs.
+Étapes :
+1. Allouer un espace mémoire pour un nœud.
+2. Initialiser data, prev, next.
+3. Retourner le pointeur vers le nœud.
+
+b. Insertion triée
+Nom : insertSorted  
+But : Insérer un nœud dans la liste en respectant l’ordre croissant.
+Étapes :
+1. Créer un nouveau nœud.
+2. Si la liste est vide → le nœud devient la tête.
+3. Si data < tête → insertion en tête.
+4. Sinon, parcourir la liste jusqu’à trouver la bonne position.
+5. Insérer le nœud entre deux éléments ou en fin.
+6. Mettre à jour les pointeurs prev et next.
+c. Affichage de la liste
+Nom : printList  
+But : Parcourir la liste et afficher les valeurs.
+Étapes :
+1. Partir de la tête.
+2. Afficher chaque data jusqu’à la fin de la liste.
+ d. Saisie utilisateur
+
+Nom : main  
+But : Permettre à l’utilisateur d’entrer les valeurs à insérer.
+Étapes :
+1. Afficher un message d’instruction.
+2. Boucle de saisie :
+   - Lire un entier.
+   - Si -1 → arrêter.
+   - Sinon → appeler insertSorted.
+3. Afficher la liste finale.
+ 6. Exemple d’exécution
+Entrez des entiers à insérer dans la liste triée.
+Tapez -1 pour arrêter la saisie.
+Valeur : 25
+Valeur : 10
+Valeur : 30
+Valeur : -1
+Liste triée : 10 25 30
+7. Complexité
+- Insertion : O(n) dans le pire cas (parcours complet).
+- Affichage : O(n)
+- Mémoire : O(n) pour n éléments insérés.
+
+*/
+
+// Définition du nœud
+typedef struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+} Node;
+
+// Création d'un nouveau nœud
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Erreur d'allocation mémoire\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Insertion triée dans la liste
+void insertSorted(Node** head, int data) {
+    Node* newNode = createNode(data);
+
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    Node* current = *head;
+
+    if (data < current->data) {
+        newNode->next = current;
+        current->prev = newNode;
+        *head = newNode;
+        return;
+    }
+
+    while (current->next != NULL && current->next->data < data) {
+        current = current->next;
+    }
+
+    newNode->next = current->next;
+    newNode->prev = current;
+
+    if (current->next != NULL) {
+        current->next->prev = newNode;
+    }
+
+    current->next = newNode;
+}
+
+// Affichage de la liste
+void printList(Node* head) {
+    Node* current = head;
+    printf("Liste triée : ");
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+// Fonction principale
+int main() {
+    Node* head = NULL;
+    int value;
+
+    printf("Entrez des entiers à insérer dans la liste triée.\n");
+    printf("Tapez -1 pour arrêter la saisie.\n");
+
+    while (1) {
+        printf("Valeur : ");
+        if (scanf("%d", &value) != 1) {
+            printf("Entrée invalide. Fin du programme.\n");
+            break;
+        }
+        if (value == -1) {
+            break;
+        }
+        insertSorted(&head, value);
+    }
+
+    printList(head);
+    return 0;
+}
