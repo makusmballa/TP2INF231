@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// D�finition du n�ud
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+// Insertion en t�te
+void insertHead(Node** tail, int value) {
+    Node* newNode = malloc(sizeof(Node));
+    if(newNode==NULL){
+        printf("Erreur d'allocation \n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = value;
+
+    if (*tail == NULL) {
+        newNode->next = newNode;
+        *tail = newNode;
+    } else {
+        newNode->next = (*tail)->next;
+        (*tail)->next = newNode;
+    }
+}
+
+// Insertion en queue
+void insertTail(Node** tail, int value) {
+    Node* newNode = malloc(sizeof(Node));
+    if(newNode==NULL){
+        printf("Erreur d'allocation \n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = value;
+
+    if (*tail == NULL) {
+        newNode->next = newNode;
+        *tail = newNode;
+    } else {
+        newNode->next = (*tail)->next;
+        (*tail)->next = newNode;
+        *tail = newNode;
+    }
+}
+
+// Affichage de la liste
+void display(Node* tail) {
+    if (tail == NULL) return;
+
+    Node* current = tail->next;
+    do {
+        printf("%d ", current->data);
+        current = current->next;
+    } while (current != tail->next);
+    printf("\n");
+}
+
+// Lib�ration de la m�moire
+void libererListe(Node** tail) {
+    if (*tail == NULL) return;
+
+    Node* current = (*tail)->next;
+    Node* temp;
+
+    while (current != *tail) {
+        temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(*tail);
+    *tail = NULL;
+}
+
+int main() {
+    Node* tail = NULL;
+    int Choice=-1;
+    int data;
+    while(Choice!=0){
+        printf("Insertion en tete:[1] \nInsertion en queue:[2]\nQuitter[0]");
+        scanf("%d",&Choice);
+        if(Choice==0){
+            libererListe(&tail); // Nettoyage m�moire
+            break;
+        }if(Choice==1){
+            printf("Insertion en tete");
+            printf("\nEntrer l'entier a inserer en tete");
+            scanf("%d",&data);
+            insertHead(&tail, data);
+            display(tail);
+        }if(Choice==2){
+            printf("Insertion en queue");
+            printf("\nEntrer l'entier a inserer en queue");
+            scanf("%d",&data);
+            insertTail(&tail, data);
+            display(tail);
+        }else{
+        printf("Choix non pris en compte");
+        }
+    }
+    return 0;
+}
