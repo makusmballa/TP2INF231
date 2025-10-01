@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Définition de la structure d’un nœud
+typedef struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+} Node;
+
+// Pointeur vers la tête de la liste
+Node *head = NULL;
+
+// Fonction pour créer un nouveau nœud
+Node* createNode(int value) {
+    Node *newNode = (Node*) malloc(sizeof(Node));
+    if (!newNode) {
+        printf("Erreur d’allocation mémoire\n");
+        exit(1);
+    }
+    newNode->data = value;
+    newNode->prev = newNode->next = NULL;
+    return newNode;
+}
+
+// Insertion en tête
+void insertHead(int value) {
+    Node *newNode = createNode(value);
+    if (head == NULL) {
+        head = newNode;
+        head->next = head;
+        head->prev = head;
+    } else {
+        Node *tail = head->prev;   // dernier élément
+        newNode->next = head;
+        newNode->prev = tail;
+        head->prev = newNode;
+        tail->next = newNode;
+        head = newNode;  // nouvelle tête
+    }
+}
+
+// Insertion en queue
+void insertTail(int value) {
+    Node *newNode = createNode(value);
+    if (head == NULL) {
+        head = newNode;
+        head->next = head;
+        head->prev = head;
+    } else {
+        Node *tail = head->prev;
+        newNode->next = head;
+        newNode->prev = tail;
+        tail->next = newNode;
+        head->prev = newNode;
+    }
+}
+
+// Fonction pour afficher la liste (sens direct)
+void afficherListe() {
+    if (head == NULL) {
+        printf("La liste est vide.\n");
+        return;
+    }
+
+    Node *temp = head;
+    printf("Liste (sens direct) : ");
+    do {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+    printf("\n");
+}
+
+// Programme principal
+int main() {
+    insertHead(10);  // Insertion en tête
+    insertHead(20);
+    insertTail(30);  // Insertion en queue
+    insertTail(40);
+
+    afficherListe();  // Affichage de la liste
+
+    return 0;
+}
