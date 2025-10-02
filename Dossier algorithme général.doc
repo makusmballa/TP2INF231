@@ -1,0 +1,229 @@
+
+
+📘 Dossier algorithmique général
+
+Exercice INF 231 – Jeudi 25 septembre 2025
+Pr. Melatagia
+
+
+---
+
+1. Problème
+
+On souhaite manipuler différentes variantes de listes chaînées en langage C, afin de :
+
+1. Lire un élément et supprimer toutes ses occurrences dans une liste simplement chaînée.
+
+
+2. Insérer un élément dans une liste simplement chaînée triée.
+
+
+3. Insérer un élément dans une liste doublement chaînée triée.
+
+
+4. Insérer un élément en tête et en queue dans une liste simplement chaînée circulaire.
+
+
+5. Insérer un élément en tête et en queue dans une liste doublement chaînée circulaire.
+
+
+
+Ces problèmes couvrent les principaux cas de manipulation de listes linéaires et circulaires, en simple ou double chaînage.
+
+
+---
+
+2. Principe
+
+Une liste chaînée est une structure de données dynamique constituée de nœuds reliés par des pointeurs.
+
+Chaque nœud contient une donnée et un lien vers le nœud suivant (et parfois vers le précédent).
+
+La manipulation d’une liste consiste à modifier ces liens pour insérer, supprimer ou rechercher des éléments.
+
+
+Les principes appliqués ici :
+
+Suppression d’occurrence : parcourir la liste, comparer chaque élément avec la valeur à supprimer, et réajuster les pointeurs.
+
+Insertion triée : parcourir la liste pour trouver la position correcte (ordre croissant), puis insérer le nouveau nœud.
+
+Liste doublement chaînée : chaque nœud pointe vers le suivant et le précédent → permet des insertions plus souples.
+
+Liste circulaire : le dernier nœud pointe sur le premier (et inversement pour la doublement chaînée circulaire).
+
+Insertion en tête/queue : adapter les liens en conséquence pour conserver la circularité.
+
+
+
+---
+
+3. Dictionnaire des données
+
+Nœud (node) :
+
+info : entier (donnée stockée).
+
+suivant : pointeur vers le nœud suivant.
+
+precedent : pointeur vers le nœud précédent (dans le cas des listes doublement chaînées).
+
+
+Liste :
+
+tête : pointeur vers le premier élément de la liste.
+
+queue : pointeur vers le dernier élément (utile pour listes circulaires ou opérations en queue).
+
+
+Élément recherché/inséré : entier x.
+
+
+
+---
+
+4. Algorithme (pseudo-code)
+
+(1) Suppression de toutes les occurrences dans une liste simplement chaînée
+
+Entrée : tête de liste, valeur x
+Début
+  p ← tête
+  précédent ← NULL
+  Tant que p ≠ NULL faire
+    Si p.info = x alors
+       Si précédent = NULL alors
+          tête ← p.suivant
+       Sinon
+          précédent.suivant ← p.suivant
+       FinSi
+       libérer p
+       p ← (suivant du précédent ou tête)
+    Sinon
+       précédent ← p
+       p ← p.suivant
+    FinSi
+  FinTantQue
+Fin
+
+(2) Insertion dans une liste simplement chaînée triée
+
+Entrée : tête de liste, valeur x
+Début
+  créer nouveau_nœud(x)
+  Si liste vide OU x < tête.info alors
+     nouveau_nœud.suivant ← tête
+     tête ← nouveau_nœud
+  Sinon
+     p ← tête
+     Tant que p.suivant ≠ NULL ET p.suivant.info < x faire
+        p ← p.suivant
+     FinTantQue
+     nouveau_nœud.suivant ← p.suivant
+     p.suivant ← nouveau_nœud
+  FinSi
+Fin
+
+(3) Insertion dans une liste doublement chaînée triée
+
+Entrée : tête de liste, valeur x
+Début
+  créer nouveau_nœud(x)
+  Si liste vide OU x < tête.info alors
+     nouveau_nœud.suivant ← tête
+     Si tête ≠ NULL alors tête.precedent ← nouveau_nœud
+     tête ← nouveau_nœud
+  Sinon
+     p ← tête
+     Tant que p.suivant ≠ NULL ET p.suivant.info < x faire
+        p ← p.suivant
+     FinTantQue
+     nouveau_nœud.suivant ← p.suivant
+     nouveau_nœud.precedent ← p
+     Si p.suivant ≠ NULL alors p.suivant.precedent ← nouveau_nœud
+     p.suivant ← nouveau_nœud
+  FinSi
+Fin
+
+(4) Insertion en tête et en queue dans une liste simplement chaînée circulaire
+
+Insertion en tête :
+  créer nouveau_nœud(x)
+  Si liste vide alors
+     tête ← nouveau_nœud
+     nouveau_nœud.suivant ← nouveau_nœud
+  Sinon
+     p ← tête
+     Tant que p.suivant ≠ tête faire
+        p ← p.suivant
+     FinTantQue
+     nouveau_nœud.suivant ← tête
+     p.suivant ← nouveau_nœud
+     tête ← nouveau_nœud
+  FinSi
+
+Insertion en queue :
+  créer nouveau_nœud(x)
+  Si liste vide alors
+     tête ← nouveau_nœud
+     nouveau_nœud.suivant ← nouveau_nœud
+  Sinon
+     p ← tête
+     Tant que p.suivant ≠ tête faire
+        p ← p.suivant
+     FinTantQue
+     p.suivant ← nouveau_nœud
+     nouveau_nœud.suivant ← tête
+  FinSi
+
+(5) Insertion en tête et en queue dans une liste doublement chaînée circulaire
+
+Insertion en tête :
+  créer nouveau_nœud(x)
+  Si liste vide alors
+     tête ← nouveau_nœud
+     tête.suivant ← tête
+     tête.precedent ← tête
+  Sinon
+     queue ← tête.precedent
+     nouveau_nœud.suivant ← tête
+     nouveau_nœud.precedent ← queue
+     tête.precedent ← nouveau_nœud
+     queue.suivant ← nouveau_nœud
+     tête ← nouveau_nœud
+  FinSi
+
+Insertion en queue :
+  créer nouveau_nœud(x)
+  Si liste vide alors
+     tête ← nouveau_nœud
+     tête.suivant ← tête
+     tête.precedent ← tête
+  Sinon
+     queue ← tête.precedent
+     nouveau_nœud.suivant ← tête
+     nouveau_nœud.precedent ← queue
+     queue.suivant ← nouveau_nœud
+     tête.precedent ← nouveau_nœud
+  FinSi
+
+
+---
+
+5. Complexité
+
+Suppression de toutes les occurrences : O(n) en temps, O(1) en espace.
+
+Insertion dans une liste triée (simple ou double) : O(n) en temps (parcours), O(1) en espace.
+
+Insertion en tête dans circulaire : O(1).
+
+Insertion en queue dans circulaire : O(n) si on ne garde pas de pointeur vers la queue, O(1) si on a la queue.
+
+Insertion en tête/queue dans circulaire double : O(1) grâce aux deux pointeurs.
+
+
+
+---
+
+  
